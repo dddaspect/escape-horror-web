@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#0b1215">
+  <title>脱出ホラー</title>
+  <style>
+    :root { color-scheme: dark; font: 16px system-ui, sans-serif; background: #0b1215; color: #f0f4f4; }
+    * { box-sizing: border-box; }
+    body { margin: 0; overflow: hidden; overscroll-behavior: none; }
+    main { position: fixed; inset: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); background: #0b1215; }
+    main:fullscreen { inset: 0; }
+    canvas { display: block; width: 100%; height: 100%; touch-action: none; outline: none; }
+    #loading { position: absolute; inset: 0; display: grid; place-content: center; gap: 14px; padding: 24px; text-align: center; background: #0b1215; }
+    progress { width: min(66vw, 320px); justify-self: center; accent-color: #5ec08a; }
+    #fullscreen { position: absolute; left: 50%; top: 8px; transform: translateX(-50%); padding: 10px 14px; min-height: 44px; border: 1px solid #6c8b87; border-radius: 6px; background: #142321db; color: inherit; font: inherit; cursor: pointer; }
+    [hidden] { display: none !important; }
+  </style>
+</head>
+<body>
+  <main id="game">
+    <canvas id="unity-canvas" tabindex="0" aria-label="脱出ホラー"></canvas>
+    <div id="loading" role="status"><span id="status">ゲームを読み込んでいます</span><progress max="1" value="0"></progress></div>
+    <button id="fullscreen" type="button" hidden>全画面</button>
+  </main>
+  <script>
+    const game = document.querySelector("#game");
+    const canvas = document.querySelector("#unity-canvas");
+    const loading = document.querySelector("#loading");
+    const status = document.querySelector("#status");
+    const progress = document.querySelector("progress");
+    const fullscreen = document.querySelector("#fullscreen");
+    const config = {
+      dataUrl: "Build/WebGL_20261123_093313.data.unityweb",
+      frameworkUrl: "Build/WebGL_20261123_093313.framework.js.unityweb",
+      codeUrl: "Build/WebGL_20261123_093313.wasm.unityweb",
+      streamingAssetsUrl: "StreamingAssets",
+      companyName: "GameStudio",
+      productName: "EscapeHorror",
+      productVersion: "0.1.0",
+      devicePixelRatio: Math.min(window.devicePixelRatio || 1, navigator.maxTouchPoints > 0 ? 1 : 1.5),
+      autoSyncPersistentDataPath: true,
+    };
+
+    const fail = (error) => {
+      status.textContent = "読み込めませんでした。ブラウザーを再読み込みしてください。";
+      progress.hidden = true;
+      console.error(error);
+    };
+    fullscreen.addEventListener("click", () => {
+      const request = document.fullscreenElement
+        ? document.exitFullscreen()
+        : game.requestFullscreen();
+      request.catch(error => console.warn("Fullscreen:", error.message));
+    });
+    document.addEventListener("fullscreenchange", () => {
+      fullscreen.textContent = document.fullscreenElement ? "全画面を終了" : "全画面";
+    });
+
+    const loader = document.createElement("script");
+    loader.src = "Build/WebGL_20261123_093313.loader.js";
+    loader.onload = () => {
+      createUnityInstance(canvas, config, value => progress.value = value).then(() => {
+        loading.hidden = true;
+        fullscreen.hidden = !document.fullscreenEnabled || typeof game.requestFullscreen !== "function";
+      }).catch(fail);
+    };
+    loader.onerror = fail;
+    document.head.appendChild(loader);
+  </script>
+</body>
+</html>

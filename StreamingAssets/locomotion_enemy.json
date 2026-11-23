@@ -1,0 +1,17 @@
+{
+    "walkSpeed": 1.2619837522506714,
+    "runSpeed": 3.501136064529419,
+    "acceleration": 2.4000000953674318,
+    "deceleration": 3.200000047683716,
+    "turnRateWalk": 160.0,
+    "turnRateRun": 135.0,
+    "turnInPlaceRate": 110.0,
+    "turnAcceleration": 900.0,
+    "sharpTurnSlowdown": 0.550000011920929,
+    "walkClipSpeed": 1.2619837522506714,
+    "runClipSpeed": 3.501136064529419,
+    "strideWalk": 0.7799999713897705,
+    "strideRun": 1.2999999523162842,
+    "animDamp": 0.05000000074505806,
+    "useRootMotion": false
+}
